@@ -5,7 +5,7 @@
     @Date: 2020/10/15
     @Gitee: https://gitee.com/missliqiju/repairapp.git
 """
-from flask import Blueprint, jsonify
+from flask import Blueprint
 from flask_restful import Api, Resource, reqparse, fields, marshal_with
 from repairapp.models import Users
 
@@ -29,8 +29,8 @@ resource_fields = {
 # 返回参数
 def get_parses():
     parses = reqparse.RequestParser()
-    parses.add_argument('username', type=str, location='form', required=True, help='用户名是必填的')
-    parses.add_argument('password', type=str, location='form', required=True, help='密码是必填的')
+    parses.add_argument('username', type=str, location=['form'], required=True, help='用户名是必填的')
+    parses.add_argument('password', type=str, location=['form'], required=True, help='密码是必填的')
     return parses.parse_args()
 
 
@@ -44,7 +44,7 @@ class Login(Resource):
         username = args.get('username')
         password = args.get('password')
         user_result = Users.query.filter(
-            Users.username == username).first_or_404()
+            Users.username == username).first()
 
         if not user_result:
             return {

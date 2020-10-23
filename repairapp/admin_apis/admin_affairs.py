@@ -22,6 +22,7 @@ affair_fields = {
     'repair_date': fields.DateTime,
     'status': fields.String
 }
+
 resource_fields = {
     'code': fields.Integer,
     'msg': fields.String,

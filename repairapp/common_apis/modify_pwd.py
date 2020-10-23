@@ -79,7 +79,7 @@ class ModifyPwd(Resource):
             print(f'---------------------{e}')
             return {
                 'code': 2004,
-                'msg': '密码错误'
+                'msg': '修改错误'
             }
         else:
             return {

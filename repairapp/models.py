@@ -64,7 +64,7 @@ class Users(db.Model):
 
 class Repair(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    img = db.Column(db.String(100), nullable=True)
+    img_name = db.Column(db.String(100), nullable=True)
     desc = db.Column(db.String(500), nullable=False)  # 报修描述not null
     remark = db.Column(db.String(500), nullable=True)
     site = db.Column(db.String(50), nullable=False)  # 位置not null
@@ -72,10 +72,10 @@ class Repair(db.Model):
     status = db.Column(db.Enum('已处理', '待处理'), nullable=False)  # 状态not null
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)  # not null
 
-    def __init__(self, desc, site, user_id, img='无', remark='无', status='待处理'):
+    def __init__(self, desc, site, user_id, img_name, remark, status='待处理'):
         self.desc = desc
         self.site = site
         self.user_id = user_id
-        self.img = img
+        self.img_name = img_name
         self.remark = remark
         self.status = status

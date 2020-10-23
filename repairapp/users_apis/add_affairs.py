@@ -6,10 +6,10 @@
     @Gitee: https://gitee.com/missliqiju/repairapp.git
 """
 import os
-from flask import Blueprint, jsonify, send_from_directory, g
+from flask import Blueprint, jsonify, g
 from werkzeug.datastructures import FileStorage
 from flask_restful import Api, Resource, reqparse, fields, marshal_with
-from repairapp.models import Repair
+from repairapp.models import Repair, Users
 from repairapp.extentions import db
 
 add_affairs_bp = Blueprint('add_affairs', __name__)
@@ -32,26 +32,34 @@ resource_fields = {
 
 def get_post_parses():
     post_parses = reqparse.RequestParser()
-    # post_parses.add_argument('token', type=str, location='headers', required=True, help='无token')
-    post_parses.add_argument('img', type=FileStorage, location='files', required=True, help='img是必须的')
+    post_parses.add_argument('token', type=str, location='headers', required=True, help='无token')
+    post_parses.add_argument('img', type=FileStorage, location='files')
     post_parses.add_argument('desc', type=str, location='form', required=True, help='desc是必须的')
-    post_parses.add_argument('remark', type=str, location='form', required=True, help='remark是必须的')
+    post_parses.add_argument('remark', type=str, location='form')
     post_parses.add_argument('site', type=str, location='form', required=True, help='site是必须的')
     return post_parses.parse_args()
+
+
+def get_parses():
+    get_parses = reqparse.RequestParser()
+    get_parses.add_argument('token', type=str, location='headers', required=True, help='无token')
+    return get_parses.parse_args()
 
 
 class AddAffairs(Resource):
     @marshal_with(resource_fields)
     def get(self):
+        args = get_parses()
+        token = args.get('token')
         # 获取并验证token
-        # token = args.get('token')
+        user = Users.verify_token(token)
+        if type(user) is dict:
+            return jsonify(user)
         # 在token中得到当前用户id
-
-
-
-
+        id = user.id
+        # 获取用户id的所有报修信息
         try:
-            affairs = Repair.query.filter(Repair.user_id == 1).all()
+            affairs = Repair.query.filter(Repair.user_id == id).all()
         except Exception as e:
             print(f'------------Error------------{e}')
             return jsonify({
@@ -67,25 +75,28 @@ class AddAffairs(Resource):
 
     def post(self):
         args = get_post_parses()
-        # 获取并验证token
-        # token = args.get('token')
-        # 获取token中的 user_id
-
-
-
-
-
+        token = args.get('token')
         img = args.get('img')
         desc = args.get('desc')
-        user_id = 1
         remark = args.get('remark')
         site = args.get('site')
-        img_path = os.path.join(g.PATH, img.filename)  # 得到img本地路径
+        # 获取并验证token
+        user = Users.verify_token(token)
+        if type(user) is dict:
+            return jsonify(user)
+        # 获取token中的 user_id
+        id = user.id
+        # 判断表单参数是否为null
+        if img is not None:
+            img_name = img.filename  # 得到img本地路径
+            img.save(os.path.join(g.PATH, img.filename))  # 将img存储到本地
+        else:
+            img_name = '无'
+        if remark == '':
+            remark = '无'
 
-        img.save(img_path)  # 将img存储到本地
-        repair = Repair(desc, site, user_id, img_path, remark)
         try:
-            db.session.add(repair)
+            db.session.add(Repair(desc, site, id, img_name, remark))
         except Exception as e:
             print(f'------------Error------------{e}')
             return jsonify({

@@ -12,11 +12,13 @@ from repairapp.models import Users
 from repairapp.extentions import db, bcrypt, cors, migrate
 from repairapp.common_apis.login import login_bp
 from repairapp.common_apis.modify_pwd import mod_pwd_bp
+from repairapp.common_apis.get_imgs import get_imgs_bp
 from repairapp.admin_apis.admin_users import admin_users_bp
 from repairapp.admin_apis.admin_techns import admin_techn_bp
 from repairapp.admin_apis.admin_affairs import admin_affair_bp
 from repairapp.users_apis.add_affairs import add_affairs_bp
 from repairapp.techns_apis.handle_affairs import handle_affairs_bp
+from repairapp.commands import register_commands
 
 
 # 数据库迁移(需导入models.Users)
@@ -35,6 +37,8 @@ def create_app(configName=None):
     register_blueprints(app)
     # 注册错误
     register_errors(app)
+    # 注册自定义命令
+    register_commands(app)
     return app
 
 
@@ -53,6 +57,7 @@ def register_blueprints(app):
     app.register_blueprint(admin_affair_bp)
     app.register_blueprint(add_affairs_bp)
     app.register_blueprint(handle_affairs_bp)
+    app.register_blueprint(get_imgs_bp)
 
 
 def register_before_request(app):
