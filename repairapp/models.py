@@ -20,7 +20,9 @@ class Users(db.Model):
     repairs = db.relationship(
         'Repair',
         backref='users',
-        lazy='dynamic'
+        lazy='dynamic',
+        cascade='all, delete-orphan',
+        passive_deletes=True
     )
 
     def __init__(self, username, password='123456', permission='0'):
@@ -70,7 +72,7 @@ class Repair(db.Model):
     site = db.Column(db.String(50), nullable=False)  # 位置not null
     repair_date = db.Column(db.DateTime, default=datetime.now)
     status = db.Column(db.Enum('已处理', '待处理'), nullable=False)  # 状态not null
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)  # not null
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'))
 
     def __init__(self, desc, site, user_id, img_name, remark, status='待处理'):
         self.desc = desc

@@ -54,7 +54,7 @@ class HandleAffairs(Resource):
             return jsonify(user)
 
         try:
-            affairs = Repair.query.all()
+            affairs = Repair.query.filter(Repair.status == '待处理').all()
         except Exception as e:
             print(f'-----------Error-----------{e}')
             return jsonify({
