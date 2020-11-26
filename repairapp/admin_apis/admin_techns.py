@@ -44,7 +44,7 @@ def get_del_parses():
     return del_parses.parse_args()
 
 
-class Admin_techn(Resource):
+class AdminTechn(Resource):
     @marshal_with(resource_fields)
     def get(self):
         args = get_parses()
@@ -52,22 +52,14 @@ class Admin_techn(Resource):
         # 获取并验证token
         user = Users.verify_token(token)
         if type(user) is dict:
-            return jsonify(user)
+            return user
 
-        try:
-            techns = Users.query.filter(Users.permission == '1').all()
-        except Exception as e:
-            print(f'-----------Error-----------{e}')
-            return jsonify({
-                'code': 5001,
-                'msg': '服务异常'
-            })
-        else:
-            return {
-                'code': 2000,
-                'msg': '返回成功',
-                'data': techns
-            }
+        techns = Users.query.filter(Users.permission == '1').all()
+        return {
+            'code': 2000,
+            'msg': '请求成功',
+            'data': techns
+        }
 
     def post(self):
         args = get_post_parses()
@@ -78,17 +70,15 @@ class Admin_techn(Resource):
             return jsonify(user)
 
         username = args.get('username')
-        techn = Users(username, '', '1')
-        techn.set_password()
-        try:
-            db.session.add(techn)
-        except Exception as e:
-            print(f'----------------Error--------------{e}')
+        if Users.query.filter(Users.username == username).first():
             return jsonify({
-                'code': 5001,
-                'msg': '服务异常'
+                'code': 4000,
+            'msg': '该技工已存在'
             })
         else:
+            techn = Users(username, '', '1')
+            techn.set_password()
+            db.session.add(techn)
             return jsonify({
                 'code': 2000,
                 'msg': '添加成功'
@@ -106,19 +96,11 @@ class Admin_techn(Resource):
             return jsonify(user)
 
         id = args.get('id')
-        try:
-            db.session.delete(Users.query.filter(Users.id == id).first())
-        except Exception as e:
-            print(f'-----------------Error------------{e}')
-            return jsonify({
-                'code': 5001,
-                'msg': '服务异常'
-            })
-        else:
-            return jsonify({
-                'code': 2000,
-                'msg': '删除成功'
-            })
+        db.session.delete(Users.query.filter(Users.id == id).first())
+        return jsonify({
+            'code': 2000,
+            'msg': '删除成功'
+        })
 
 
-api.add_resource(Admin_techn, '/repairapp/v1/techns', endpoint='admin_techn')
+api.add_resource(AdminTechn, '/repairapp/v1/techns', endpoint='admin_techn')

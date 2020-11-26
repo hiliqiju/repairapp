@@ -16,7 +16,7 @@ class Users(db.Model):
     username = db.Column(db.String(50), nullable=False, unique=True)
     password = db.Column(db.String(100), nullable=False)
     regist_date = db.Column(db.DateTime, default=datetime.now)
-    permission = db.Column(db.Enum('0', '1', '2'), default='0')
+    permission = db.Column(db.String(10), default='0')
     repairs = db.relationship(
         'Repair',
         backref='users',
@@ -32,9 +32,6 @@ class Users(db.Model):
 
     def set_password(self, password='123456'):
         self.password = bcrypt.generate_password_hash(password)
-
-    def set_new_password(self, password='123456'):
-        return bcrypt.generate_password_hash(password)
 
     def check_password(self, password):
         return bcrypt.check_password_hash(self.password, password)
@@ -62,6 +59,10 @@ class Users(db.Model):
         else:
             msg = Users.query.get(data['id'])
         return msg
+
+    @staticmethod
+    def set_new_password(password):
+        return bcrypt.generate_password_hash(password)
 
 
 class Repair(db.Model):

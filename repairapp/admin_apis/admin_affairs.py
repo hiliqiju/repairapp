@@ -15,7 +15,7 @@ api = Api(admin_affair_bp)
 
 affair_fields = {
     'id': fields.Integer,
-    'img': fields.String,
+    'img_name': fields.String,
     'desc': fields.String,
     'remark': fields.String,
     'site': fields.String,
@@ -43,7 +43,7 @@ def get_del_parses():
     return del_parses.parse_args()
 
 
-class Admin_Affair(Resource):
+class AdminAffair(Resource):
     @marshal_with(resource_fields)
     def get(self):
         args = get_parses()
@@ -51,22 +51,14 @@ class Admin_Affair(Resource):
         # 获取并验证token
         user = Users.verify_token(token)
         if type(user) is dict:
-            return jsonify(user)
+            return user
 
-        try:
-            affairs = Repair.query.all()
-        except Exception as e:
-            print(f'-----------Error-----------{e}')
-            return jsonify({
-                'code': 5001,
-                'msg': '服务异常'
-            })
-        else:
-            return {
-                'code': 2000,
-                'msg': '返回成功',
-                'data': affairs
-            }
+        affairs = Repair.query.all()
+        return {
+            'code': 2000,
+            'msg': '返回成功',
+            'data': affairs
+        }
 
     def post(self):
         ...
@@ -76,20 +68,18 @@ class Admin_Affair(Resource):
 
     def delete(self):
         args = get_del_parses()
+        id = args.get('id')
         # 获取并验证token
         token = args.get('token')
         user = Users.verify_token(token)
         if type(user) is dict:
             return jsonify(user)
 
-        id = args.get('id')
-        try:
-            db.session.delete(Repair.query.filter(Repair.id == id).first())
-        except Exception as e:
-            print(f'-----------Error-----------{e}')
+        res = Repair.query.filter(Repair.id == id).delete()
+        if not res:
             return jsonify({
-                'code': 5001,
-                'msg': '服务异常'
+                'code': 4000,
+                'msg': '删除失败'
             })
         else:
             return {
@@ -98,4 +88,4 @@ class Admin_Affair(Resource):
             }
 
 
-api.add_resource(Admin_Affair, '/repairapp/v1/del/affairs', endpoint='admin_affairs')
+api.add_resource(AdminAffair, '/repairapp/v1/del/affairs', endpoint='admin_affairs')

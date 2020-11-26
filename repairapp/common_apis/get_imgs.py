@@ -14,7 +14,7 @@ api = Api(get_imgs_bp)
 
 def get_parses():
     parses = reqparse.RequestParser()
-    parses.add_argument('img_name', type=str, location='args', )
+    parses.add_argument('img_name', type=str, location='args', required=True, help='无图片名称')
     return parses.parse_args()
 
 

@@ -14,7 +14,7 @@ api = Api(handle_affairs_bp)
 
 affair_fields = {
     'id': fields.Integer,
-    'img': fields.String,
+    'img_name': fields.String,
     'desc': fields.String,
     'remark': fields.String,
     'site': fields.String,
@@ -51,22 +51,14 @@ class HandleAffairs(Resource):
         # 获取并验证token
         user = Users.verify_token(token)
         if type(user) is dict:
-            return jsonify(user)
+            return user
 
-        try:
-            affairs = Repair.query.filter(Repair.status == '待处理').all()
-        except Exception as e:
-            print(f'-----------Error-----------{e}')
-            return jsonify({
-                'code': 5001,
-                'msg': '服务异常'
-            })
-        else:
-            return {
-                'code': 2000,
-                'msg': '返回成功',
-                'data': affairs
-            }
+        affairs = Repair.query.filter(Repair.status == '待处理').all()
+        return {
+            'code': 2000,
+            'msg': '返回成功',
+            'data': affairs
+        }
 
     def post(self):
         ...
@@ -81,21 +73,18 @@ class HandleAffairs(Resource):
         if type(user) is dict:
             return jsonify(user)
 
-        try:
-            Repair.query.filter(Repair.id == id).update({
-                'status': status
+        res = Repair.query.filter(Repair.id == id).update({
+            'status': status
+        })
+        if not res:
+            return jsonify({
+                'code': 4000,
+                'msg': '修改失败'
             })
-        except Exception as e:
-            print(f'---------------------{e}')
-            return {
-                'code': 2004,
-                'msg': '修改错误'
-            }
-        else:
-            return {
-                'code': 2000,
-                'msg': '修改成功'
-            }
+        return jsonify({
+            'code': 2000,
+            'msg': '修改成功'
+        })
 
     def delete(self):
         ...

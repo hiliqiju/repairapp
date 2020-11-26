@@ -14,16 +14,14 @@ class baseConfig:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True  # 开启自动提交
     SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:123@127.0.0.1:3306/repairapp_db'
-    # flask_redis
-    REDIS_URL = 'redis://:123@localhost:6379/0'
 
 
 class development(baseConfig):
-    DEBUG = True
+    ...
 
 
 class production(baseConfig):
-    DEBUG = False
+    ...
 
 
 class testing(baseConfig):

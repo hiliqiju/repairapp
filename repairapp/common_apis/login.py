@@ -49,11 +49,11 @@ class Login(Resource):
         if not user_result:
             return {
                 'msg': '用户不存在',
-                'code': 2003,
+                'code': 4000,
             }
         elif not Users(username, user_result.password).check_password(password):
             return {
-                'code': 2002,
+                'code': 4000,
                 'msg': '密码不正确',
             }
         else:

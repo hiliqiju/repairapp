@@ -54,24 +54,16 @@ class AddAffairs(Resource):
         # 获取并验证token
         user = Users.verify_token(token)
         if type(user) is dict:
-            return jsonify(user)
+            return user
         # 在token中得到当前用户id
         id = user.id
         # 获取用户id的所有报修信息
-        try:
-            affairs = Repair.query.filter(Repair.user_id == id).all()
-        except Exception as e:
-            print(f'------------Error------------{e}')
-            return jsonify({
-                'code': 5001,
-                'msg': '服务异常'
-            })
-        else:
-            return {
-                'code': 2000,
-                'msg': '返回成功',
-                'data': affairs
-            }
+        affairs = Repair.query.filter(Repair.user_id == id).all()
+        return {
+            'code': 2000,
+            'msg': '请求成功',
+            'data': affairs
+        }
 
     def post(self):
         args = get_post_parses()
@@ -94,20 +86,11 @@ class AddAffairs(Resource):
             img_name = '无'
         if remark == '':
             remark = '无'
-
-        try:
-            db.session.add(Repair(desc, site, id, img_name, remark))
-        except Exception as e:
-            print(f'------------Error------------{e}')
-            return jsonify({
-                'code': 5001,
-                'msg': '服务异常'
-            })
-        else:
-            return jsonify({
-                'code': 2000,
-                'msg': '添加成功',
-            })
+        db.session.add(Repair(desc, site, id, img_name, remark))
+        return jsonify({
+            'code': 2000,
+            'msg': '添加成功',
+        })
 
     def put(self):
         ...

@@ -53,22 +53,14 @@ class AdminUsers(Resource):
         # 获取并验证token
         user = Users.verify_token(token)
         if type(user) is dict:
-            return jsonify(user)
+            return user
 
-        try:
-            users = Users.query.filter(Users.permission == '0').all()
-        except Exception as e:
-            print(f'------------Error------------{e}')
-            return jsonify({
-                'code': 5001,
-                'msg': '服务异常'
-            })
-        else:
-            return {
-                'code': 2000,
-                'msg': '返回成功',
-                'data': users
-            }
+        users = Users.query.filter(Users.permission == '0').all()
+        return {
+            'code': 2000,
+            'msg': '请求成功',
+            'data': users
+        }
 
     def post(self):
         args = get_post_parses()
@@ -79,17 +71,15 @@ class AdminUsers(Resource):
             return jsonify(user)
 
         username = args.get('username')
-        new_user = Users(username)
-        new_user.set_password()
-        try:
-            db.session.add(new_user)
-        except Exception as e:
-            print(f'-----------{e}')
+        if Users.query.filter(Users.username == username).first():
             return jsonify({
-                'code': 5001,
-                'msg': '服务异常'
+                'code': 4000,
+                'msg': '该用户已存在'
             })
         else:
+            new_user = Users(username)
+            new_user.set_password()
+            db.session.add(new_user)
             return jsonify({
                 'code': 2000,
                 'msg': '添加成功'
@@ -101,19 +91,17 @@ class AdminUsers(Resource):
     def delete(self):
         args = get_del_parses()
         token = args.get('token')
+        id = args.get('id')
         # 获取并验证token
         user = Users.verify_token(token)
         if type(user) is dict:
             return jsonify(user)
 
-        id = args.get('id')
-        try:
-            db.session.delete(Users.query.filter(Users.id == id).first())
-        except Exception as e:
-            print(f'------------------{e}')
+        res = Users.query.filter(Users.id == id).delete()
+        if not res:
             return jsonify({
-                'code': 5001,
-                'msg': '服务异常'
+                'code': 4000,
+                'msg': '删除失败'
             })
         else:
             return jsonify({

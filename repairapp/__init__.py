@@ -7,18 +7,18 @@
 """
 import os
 from flask import Flask, jsonify, g
-from repairapp.settings import config
-from repairapp.models import Users
-from repairapp.extentions import db, bcrypt, cors, migrate
-from repairapp.common_apis.login import login_bp
-from repairapp.common_apis.modify_pwd import mod_pwd_bp
-from repairapp.common_apis.get_imgs import get_imgs_bp
-from repairapp.admin_apis.admin_users import admin_users_bp
-from repairapp.admin_apis.admin_techns import admin_techn_bp
-from repairapp.admin_apis.admin_affairs import admin_affair_bp
-from repairapp.users_apis.add_affairs import add_affairs_bp
-from repairapp.techns_apis.handle_affairs import handle_affairs_bp
-from repairapp.commands import register_commands
+from .settings import config
+from .models import Users
+from .extentions import db, bcrypt, cors, migrate
+from .common_apis.login import login_bp
+from .common_apis.modify_pwd import mod_pwd_bp
+from .common_apis.get_imgs import get_imgs_bp
+from .admin_apis.admin_users import admin_users_bp
+from .admin_apis.admin_techns import admin_techn_bp
+from .admin_apis.admin_affairs import admin_affair_bp
+from .users_apis.add_affairs import add_affairs_bp
+from .techns_apis.handle_affairs import handle_affairs_bp
+from .commands import register_commands
 
 
 # 数据库迁移(需导入models.Users)
