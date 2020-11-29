@@ -9,7 +9,8 @@ import os
 
 
 class baseConfig:
-    SECRET_KEY = os.urandom(24)
+    # SECRET_KEY = os.urandom(24)
+    SECRET_KEY = 'EWIOH#&#@(&Fejfwo3&$J#&JFL#42KF34*(&H6FJWE'
     # flask_SQLAlchemy
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True  # 开启自动提交

@@ -3,9 +3,10 @@
     @Author: liqiju
     @Email: helloliqiju@qq.com
     @Date: 2020/10/15
-    @Gitee: https://gitee.com/missliqiju/repairapp.git
 """
 from flask import Blueprint
+import flask_restful
+from repairapp.customabort import custom_abort
 from flask_restful import Api, Resource, reqparse, fields, marshal_with
 from repairapp.models import Users
 
@@ -34,6 +35,10 @@ def get_parses():
     return parses.parse_args()
 
 
+# 自定义msg
+flask_restful.abort = custom_abort
+
+
 class Login(Resource):
     def get(self):
         ...
@@ -48,8 +53,8 @@ class Login(Resource):
 
         if not user_result:
             return {
-                'msg': '用户不存在',
                 'code': 4000,
+                'msg': '用户不存在',
             }
         elif not Users(username, user_result.password).check_password(password):
             return {

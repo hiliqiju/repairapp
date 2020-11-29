@@ -5,8 +5,10 @@
     @Date: 2020/10/18
     @Gitee: https://gitee.com/missliqiju/repairapp.git
 """
+import flask_restful
 from flask import Blueprint, jsonify
 from flask_restful import Resource, Api, fields, reqparse, marshal_with
+from repairapp.customabort import custom_abort
 from repairapp.models import Users
 from repairapp.extentions import db
 
@@ -44,6 +46,10 @@ def get_del_parses():
     return del_parses.parse_args()
 
 
+# 自定义msg
+flask_restful.abort = custom_abort
+
+
 class AdminTechn(Resource):
     @marshal_with(resource_fields)
     def get(self):
@@ -73,7 +79,7 @@ class AdminTechn(Resource):
         if Users.query.filter(Users.username == username).first():
             return jsonify({
                 'code': 4000,
-            'msg': '该技工已存在'
+                'msg': '该技工已存在'
             })
         else:
             techn = Users(username, '', '1')

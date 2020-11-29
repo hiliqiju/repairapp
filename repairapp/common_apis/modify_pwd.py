@@ -5,8 +5,10 @@
     @Date: 2020/10/17
     @Gitee: https://gitee.com/missliqiju/repairapp.git
 """
+import flask_restful
 from flask import Blueprint, jsonify
 from flask_restful import Api, Resource, reqparse
+from repairapp.customabort import custom_abort
 from repairapp.models import Users
 
 mod_pwd_bp = Blueprint('mod_pwd', __name__)
@@ -21,6 +23,10 @@ def new_pwd_parses():
     parses.add_argument('conf_pwd', type=str, location='form', required=True, help='确认密码未填写')
     parses.add_argument('token', type=str, location='headers', required=True, help='无token')
     return parses.parse_args()
+
+
+# 自定义msg
+flask_restful.abort = custom_abort
 
 
 class ModifyPwd(Resource):

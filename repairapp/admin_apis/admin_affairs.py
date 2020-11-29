@@ -3,11 +3,11 @@
     @Author: liqiju
     @Email: helloliqiju@qq.com
     @Date: 2020/10/19
-    @Gitee: https://gitee.com/missliqiju/repairapp.git
 """
+import flask_restful
 from flask import Blueprint, jsonify
 from flask_restful import Api, Resource, reqparse, fields, marshal_with
-from repairapp.extentions import db
+from repairapp.customabort import custom_abort
 from repairapp.models import Repair, Users
 
 admin_affair_bp = Blueprint('admin_affair', __name__)
@@ -41,6 +41,10 @@ def get_del_parses():
     del_parses.add_argument('id', type=str, location='form', required=True, help='id是必须的')
     del_parses.add_argument('token', type=str, location='headers', required=True, help='无token')
     return del_parses.parse_args()
+
+
+# 自定义msg
+flask_restful.abort = custom_abort
 
 
 class AdminAffair(Resource):

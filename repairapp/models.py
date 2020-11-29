@@ -3,7 +3,6 @@
     @Author: liqiju
     @Email: helloliqiju@qq.com
     @Date: 2020/10/15
-    @Gitee: https://gitee.com/missliqiju/repairapp.git
 """
 from repairapp.extentions import db, bcrypt
 from flask import current_app

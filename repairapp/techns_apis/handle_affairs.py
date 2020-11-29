@@ -5,8 +5,10 @@
     @Date: 2020/10/19
     @Gitee: https://gitee.com/missliqiju/repairapp.git
 """
+import flask_restful
 from flask import Blueprint, jsonify
 from flask_restful import Api, Resource, reqparse, fields, marshal_with
+from repairapp.customabort import custom_abort
 from repairapp.models import Users, Repair
 
 handle_affairs_bp = Blueprint('handle_affairs', __name__)
@@ -41,6 +43,10 @@ def get_put_parses():
     put_parses.add_argument('id', type=int, location='form', required=True, help='id字段是必须的')
     put_parses.add_argument('status', type=str, location='form', required=True, help='status字段是必须的')
     return put_parses.parse_args()
+
+
+# 自定义msg
+flask_restful.abort = custom_abort
 
 
 class HandleAffairs(Resource):

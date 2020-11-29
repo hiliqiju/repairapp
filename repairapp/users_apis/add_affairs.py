@@ -6,9 +6,11 @@
     @Gitee: https://gitee.com/missliqiju/repairapp.git
 """
 import os
+import flask_restful
 from flask import Blueprint, jsonify, g
 from werkzeug.datastructures import FileStorage
 from flask_restful import Api, Resource, reqparse, fields, marshal_with
+from repairapp.customabort import custom_abort
 from repairapp.models import Repair, Users
 from repairapp.extentions import db
 
@@ -44,6 +46,10 @@ def get_parses():
     get_parses = reqparse.RequestParser()
     get_parses.add_argument('token', type=str, location='headers', required=True, help='无token')
     return get_parses.parse_args()
+
+
+# 自定义msg
+flask_restful.abort = custom_abort
 
 
 class AddAffairs(Resource):
