@@ -9,6 +9,7 @@ import os
 from flask import Flask, jsonify, g
 from .settings import config
 from .models import Users
+import flask_excel as excel
 from .extentions import db, bcrypt, cors, migrate
 from .common_apis.login import login_bp
 from .common_apis.modify_pwd import mod_pwd_bp
@@ -47,6 +48,7 @@ def register_extentions(app):
     migrate.init_app(app, db)
     bcrypt.init_app(app)
     cors.init_app(app, resources={r"/repairapp/v1/*": {"origins": "*"}})
+    excel.init_excel(app)
 
 
 def register_blueprints(app):

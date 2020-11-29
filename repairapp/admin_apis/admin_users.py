@@ -6,7 +6,7 @@
     @Gitee: https://gitee.com/missliqiju/repairapp.git
 """
 import flask_restful
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 from flask_restful import Api, Resource, fields, marshal_with, reqparse
 from repairapp.customabort import custom_abort
 from repairapp.models import Users
@@ -30,6 +30,13 @@ resource_fields = {
 def get_post_parses():
     post_parses = reqparse.RequestParser()
     post_parses.add_argument('username', type=str, location='form', required=True, help='用户名是必需的')
+    post_parses.add_argument('token', type=str, location='headers', required=True, help='无token')
+    return post_parses.parse_args()
+
+
+def get_put_parses():
+    post_parses = reqparse.RequestParser()
+    post_parses.add_argument('file', type=str, location='form', required=True, help='文件是必需的')
     post_parses.add_argument('token', type=str, location='headers', required=True, help='无token')
     return post_parses.parse_args()
 
@@ -71,12 +78,12 @@ class AdminUsers(Resource):
     def post(self):
         args = get_post_parses()
         token = args.get('token')
+        username = args.get('username')
         # 获取并验证token
         user = Users.verify_token(token)
         if type(user) is dict:
             return jsonify(user)
 
-        username = args.get('username')
         if Users.query.filter(Users.username == username).first():
             return jsonify({
                 'code': 4000,
@@ -92,7 +99,23 @@ class AdminUsers(Resource):
             })
 
     def put(self):
-        ...
+        args = get_del_parses()
+        token = args.get('token')
+        # 获取并验证token
+        user = Users.verify_token(token)
+        if type(user) is dict:
+            return jsonify(user)
+
+        def user_init_func(row):
+            c = Users(row['无', 'username', '无', '无', '无'], )
+            return c
+
+        request.save_book_to_database(
+            field_name='file',
+            session=db.session,
+            tables=[Users],
+            initializers=[user_init_func]
+        )
 
     def delete(self):
         args = get_del_parses()
